@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Quevedo Fest</title>
+    <link rel="stylesheet"  href="quevedoFest.css">
+</head>
+<body>
+<h2>Modelo Relacional Área Administrativa</h2>
+<p>PERSONAL (<span class ="clave">ID</span>, nombre, apelidos
+    , sueldo, <span class="fk">IDAfinanciera(FK)</span>  )</p>
+<p>EMPLEADOS (<span class ="clave">ID</span>, nombre,apelidos,tlfn,
+    nif,horario,sueldo )</p>
+<p>ÁREA FINANCIERA (<span class="clave">ID</span>nombre, apelidos
+    , sueldo, <span class="fk">IDPersonal(FK)</span></span> )
+</p>
+<p>GASTOS (<span class="clave">ID</span>, cantidad, tipo ) </p>
+<p>INGRESOS (<span class="clave">ID</span>, nombre, total_ingreso,
+     descuento, fecha, cantidad )</p>
+<p>RETRANSMISIONES (<span class ="clave">codigo</span>,nombre, total_ingreso, fecha )</p>
+<p>TRABAJAN (<span class="clave">IDPersonal(FK), IDEmpleado(FK)</span> ) </p>
+<p>CONTROLA (<span class="clave">IDAfinanciera(FK), IDIngresos()FK), IDGastos(FK)</span> )</p>
+
+</body>
+</html>

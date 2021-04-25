@@ -1,0 +1,11 @@
+h2 {
+    font-family: Arial;
+}
+.clave{
+    text-decoration: underline;
+    font-weight: bold;
+    color: green;
+}
+.fk{
+    color: blue;
+}
