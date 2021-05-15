@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Quevedo Fest</title>
+    <link rel="stylesheet"  href="quevedoFest.css">
+</head>
+<body>
+<h2>MODELO RELACIONAL QUEVEDO FEST</h2>
+<p>CLIENTE (<span class ="clave">ID</span>, nombre, apelidos, fecha nacimiento
+    , ciudad, calle, CP )</p>
+<p>ENTRADAS (<span class ="clave">ID, </span><span class="fk">IDfestival(FK)</span>, precio, fecha, descuento,
+    tipo )</p>
+<p>SEGURO (<span class="clave">ID</span>, precio )</p>
+<p>FESTIVAL (<span class="clave">ID</span>, nombre, fecha inicio, fecha fin, ciudad, recinto ) </p>
+<p>CONCIERTO (<span class="clave">ID, </span><span class="fk">IDfestival(FK)</span>, fecha, escenario )</p>
+<p>RETRANSMISIÓN(<span class ="clave">ID</span>, visualizaciones, medio )</p>
+<p>ARTISTAS (<span class="clave">ID, </span><span class="fk">IDconcierto(FK)</span>, nombre ) </p>
+<p>CATEGORÍAS (<span class="clave">ID</span>, genero )</p>
+<p>COMPRA (<span class="clave">IDcliente(FK), IDentrada(FK)</span>, via )</p>
+<p>CONTRATA (<span class="clave">IDentrada(FK)</span><span class="fk">IDseguro(FK)</span> )</p>
+<p>EMITE (<span class="clave">IDconcierto(FK), IDretransmisión(FK)</span> )</p>
+<p>CATEGORÍAS-ARTISTAS (<span class="clave">IDartistas(FK), IDcategorias(FK)</span> )</p>
+
+
+
+
+
+</body>
+</html>
