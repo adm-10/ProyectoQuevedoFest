@@ -56,6 +56,7 @@ Con los datos ya cargados podremos realizar consultas y obtener la información 
    - [x] 3.1. Modelo Relacional
 
  <img src="/images/RelacionalQF.png" alt="imagen Modelo-Relacional"/>
+ 
    - [x] 3.2. Normalización/Desnormalización
 
 Normalización de las tablas donde fue necesario: 
@@ -312,7 +313,7 @@ CREATE TABLE categorias_artistas (
     );	
 
 ```
-   - [ ] 4.3. Carga de datos de prueba
+   - [x] 4.3. Carga de datos de prueba
 
 
 ```
