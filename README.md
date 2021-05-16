@@ -664,12 +664,752 @@ INSERT INTO categorias_artistas VALUES
 
 ```
 - [x] 5. Consultas de la base de datos
-   - [ ] 5.1. Consultas más frecuentes
-   - [ ] 5.2. Consultas sencillas
-   - [ ] 5.3. Consultas de agregación y resumen
-   - [ ] 5.4. Consultas con subconsultas
-- [ ] 6. Vistas, secuencias e índices
-- [ ] 7. Scripts en PL/pgSQL
+   - [x] 5.1. Consultas más frecuentes
+
+
+-- cliente que contrataron seguro y el precio de este
+
+```sql
+select concat(c.nombre,' ',c.apellidos) as "nombre",
+ct.entrada_id,
+s.precio,
+e.precio
+from cliente c 
+join compra cm on (c.id = cm.cliente_id)
+join entradas e on (cm.entrada_id = e.id)
+join contratar ct on (e.id = ct.entrada_id)
+join seguro s on (ct.seguro_id = s.id)
+where ct.entrada_id = e.id;
+```
+
+```
+             nombre             | entrada_id | precio | precio
+--------------------------------+------------+--------+--------
+ JOSE GIMENO MORA               | ET03       |  10.00 | 110.00
+ NATALIA JALDO SUAREZ           | ET06       |  10.00 | 110.00
+ RAFAEL RODRIGUEZ PARRA         | ET11       |  10.00 | 110.00
+ BELEN MATIAS FERNANDEZ         | ET15       |  10.00 | 110.00
+ MARTA JIMENEZ GIL              | ET18       |  10.00 | 110.00
+ JORGE SANCHEZ RAMON            | ET21       |  10.00 | 110.00
+ JUAN RUIZ HERNANDEZ            | ET24       |  10.00 | 110.00
+ ALVARO VILCHEZ CARMONA         | ET25       |  10.00 | 110.00
+ FRANCISCO ARCOS CARMONA        | ET27       |  10.00 | 110.00
+ EDUARDO CASAS PÁEZ             | ET29       |  10.00 | 110.00
+ ROSARIO INMACULADA HORTA OCHOA | ET47       |  10.00 | 110.00
+ VERONICA CASTELLANOS ROJAS     | ET55       |  10.00 | 110.00
+ MARIA VEGA ZAMBRANO            | ET59       |  10.00 | 110.00
+ RAQUEL GOMEZ GIANINE           | ET65       |  10.00 | 110.00
+ GABRIEL FORERO PEÑA            | ET68       |  10.00 | 110.00
+(15 rows)
+
+
+```
+
+-- nombre y apellidos de los asistentes
+
+```sql
+select concat(nombre,' ',apellidos) as "nombre y apellidos"
+from cliente;
+```
+
+```
+
+ ROSA MARIA ACIEN ZURUTA
+ DANIEL ALBUSAC TAMARGO
+ JOSE GIMENO MORA
+ SUSANA IGLESIAS PASTOR
+ IRENE RODRIGUEZ GARCIA
+ NATALIA JALDO SUAREZ
+ MONICA MUÑOZ BENAVIDES
+ SUSANA LOPEZ CASADO
+ ISABEL NAVARRO MARTIN
+ MATIAS RODRIGUEZ MARTINEZ
+ RAFAEL RODRIGUEZ PARRA
+ SANDRA HUERTAS PEREZ
+ HUGO LOPEZ ROBLES
+ JESSICA CORTES AMATE
+ BELEN MATIAS FERNANDEZ
+
+
+```
+-- Grupos que tocaron
+
+```sql
+
+select nombre as "nombre de artitas"
+from artistas;
+```
+
+```
+ nombre de artitas
+-------------------
+ GUNS AND ROSES
+ MADONA
+ DAVID GUETTA
+ EMINEM
+ AC-DC
+ BRUNO MARS
+ CALVIN HARRIS
+ DRAKE
+(8 rows)
+
+```
+-- Categorias de musica
+
+```sql
+
+select genero as "genero de música"
+from categorias;
+```
+
+```
+
+ genero de música
+------------------
+ ROCK
+ POP
+ ELECTRONICA
+ RAP
+(4 rows)
+
+```
+
+   - [x] 5.2. Consultas sencillas
+
+-- Mostrar lista de tablas del festival 
+
+```sql
+/d
+```
+```
+
+quevedofest=# \d
+                 List of relations
+ Schema |        Name         | Type  |   Owner
+--------+---------------------+-------+------------
+ public | artistas            | table | dbo_daw1_a
+ public | categorias          | table | dbo_daw1_a
+ public | categorias_artistas | table | dbo_daw1_a
+ public | cliente             | table | dbo_daw1_a
+ public | compra              | table | dbo_daw1_a
+ public | concierto           | table | dbo_daw1_a
+ public | contratar           | table | dbo_daw1_a
+ public | emite               | table | dbo_daw1_a
+ public | entradas            | table | dbo_daw1_a
+ public | festival            | table | dbo_daw1_a
+ public | retransmision       | table | dbo_daw1_a
+ public | seguro              | table | dbo_daw1_a
+(12 rows)
+
+```
+--Clientes en orden de fecha de nacimiento ascendente
+
+```sql
+select concat(nombre,' ',apellidos) as "nombre y apellidos",
+fecha_nacimiento
+from cliente
+order by fecha_nacimiento ASC;
+
+```
+
+```
+
+       nombre y apellidos       | fecha_nacimiento
+--------------------------------+------------------
+ JUAN RUIZ HERNANDEZ            | 1990-07-01
+ JESSICA CORTES AMATE           | 1990-08-08
+ JOSE GIMENO MORA               | 1990-12-14
+ HUGO LOPEZ ROBLES              | 1991-03-05
+ ROSARIO INMACULADA HORTA OCHOA | 1991-09-15
+ SUSANA IGLESIAS PASTOR         | 1991-10-03
+
+ ISABEL IREGUI GALEANO          | 2002-12-09
+ JORGE SANCHEZ RAMON            | 2003-04-23
+ MANUELA DUEÑAS ROJAS           | 2003-10-04
+ DOMINGO ZÚÑIGA RAMÍREZ         | 2004-11-16
+ MONICA LOPEZ OJEDA             | 2005-02-20
+ DAVID MARQUEZ GAMARRA          | 2006-03-21
+ RAFAEL OVALLE SOLANO           | 2007-01-13
+(70 rows)
+
+```
+--Ver la edad en años del cliente mas joven
+
+```sql
+
+select concat(nombre,' ',apellidos) as "nombre",
+ date_part('year',age(fecha_nacimiento)) as "años"
+from cliente
+group by fecha_nacimiento,nombre,apellidos
+order by "años" asc limit 1;
+
+```
+```
+        nombre        | años
+----------------------+------
+ RAFAEL OVALLE SOLANO |   14
+(1 row)
+
+```
+-- Edad del cliente más mayor
+
+```sql
+select concat(nombre,' ',apellidos) as "nombre",
+ date_part('year',age(fecha_nacimiento)) as "años"
+from cliente
+group by fecha_nacimiento,nombre,apellidos
+order by "años" desc limit 1;
+```
+
+```
+       nombre        | años
+---------------------+------
+ JUAN RUIZ HERNANDEZ |   30
+(1 row)
+
+```
+-- Entradas de cada tipo
+
+```sql
+
+select tipo as "tipo entradas",
+count(tipo) as "número entradas"
+from entradas
+group by tipo;
+```
+
+```
+ tipo entradas | número entradas
+---------------+-----------------
+ VIP           |              10
+ NORMAL        |              60
+(2 rows)
+
+```
+-- Precio por tipo de entrada
+
+```sql
+
+select tipo, precio
+from entradas
+group by tipo, precio;
+```
+
+```
+  tipo  | precio
+--------+--------
+ VIP    | 200.00
+ NORMAL | 100.00
+ NORMAL | 110.00
+ NORMAL |  90.00
+(4 rows)
+
+```
+-- Entradas con descuento
+
+```sql
+
+select id,precio
+from entradas
+where descuento = 'SI'
+group by id,precio;
+```
+
+```
+  id  | precio
+------+--------
+ ET17 |  90.00
+ ET57 |  90.00
+ ET63 |  90.00
+ ET02 |  90.00
+ ET26 |  90.00
+ ET14 |  90.00
+ ET39 |  90.00
+ ET08 |  90.00
+ ET50 |  90.00
+ ET19 |  90.00
+(10 rows)
+
+```
+
+   - [x] 5.3. Consultas de agregación y resumen
+
+-- Cantidad total que se pagaron por los seguros
+
+```sql
+select sum(precio) as "total descontado"
+from seguro;
+```
+```
+ total descontado
+------------------
+           150.00
+(1 row)
+
+```
+-- Candidad de entradas que se vendio por dia segun el artista
+
+```sql
+select a.nombre , 
+count(e.fecha) as "numero de entrada",
+c.fecha
+from artistas a 
+join concierto c on (a.concierto_id = c.id)
+join festival f on (c.festival_id = f.id)
+join entradas e on (f.id = e.festival_id)
+where c.fecha = e.fecha
+group by e.fecha, a.nombre,c.fecha;
+
+```
+```
+     nombre     | numero de entrada |   fecha
+----------------+-------------------+------------
+ AC-DC          |                20 | 2021-06-24
+ GUNS AND ROSES |                20 | 2021-06-24
+ BRUNO MARS     |                13 | 2021-06-25
+ MADONA         |                13 | 2021-06-25
+ CALVIN HARRIS  |                25 | 2021-06-26
+ DAVID GUETTA   |                25 | 2021-06-26
+ DRAKE          |                12 | 2021-06-27
+ EMINEM         |                12 | 2021-06-27
+(8 rows)
+
+
+```
+-- Artista con menos visualizaciones
+
+```sql
+select nombre, visualizaciones
+from artistas a 
+join concierto c on (a.concierto_id = c.id)
+join emite e on (c.id = e.concierto_id)
+join retransmision r on (e.retransmision_id = r.id)
+order by visualizaciones asc limit 1;
+```
+
+```
+
+ nombre | visualizaciones
+--------+-----------------
+ MADONA |              50
+(1 row)
+
+```
+
+-- Artista con más visualizaciones
+
+```sql
+select nombre, visualizaciones
+from artistas a 
+join concierto c on (a.concierto_id = c.id)
+join emite e on (c.id = e.concierto_id)
+join retransmision r on (e.retransmision_id = r.id)
+order by visualizaciones desc limit 1;
+```
+
+```
+ nombre | visualizaciones
+--------+-----------------
+ DRAKE  |             800
+(1 row)
+
+```
+-- Dia con menos personas
+
+```sql
+select fecha,
+count(*) as "personas"
+from entradas
+group by fecha
+order by "personas" asc limit 1;
+```
+
+```
+   fecha    | personas
+------------+----------
+ 2021-06-27 |       12
+(1 row)
+
+```
+-- Día con más personas
+
+```sql
+select fecha,
+count(*) as "personas"
+from entradas
+group by fecha
+order by "personas" desc limit 1;
+
+```
+```
+   fecha    | personas
+------------+----------
+ 2021-06-26 |       25
+(1 row)
+
+```
+-- Número de entradas con descuento
+
+```sql
+select count(descuento) as "num entradas con descuento"
+from entradas
+where descuento = 'SI';
+```
+
+```
+ num entradas con descuento
+----------------------------
+                         10
+(1 row)
+
+```
+-- Recaudacion total de entradas
+
+```sql
+
+select SUM(precio) as "ganancia total venta entradas"
+from entradas;
+```
+
+
+```
+ ganancia total venta entradas
+-------------------------------
+                       8050.00
+(1 row)
+
+```
+
+-- Entradas de cada tipo
+
+```sql
+
+select tipo as "tipo entradas",
+count(tipo) as "número entradas"
+from entradas
+group by tipo;
+```
+
+```
+ tipo entradas | número entradas
+---------------+-----------------
+ VIP           |              10
+ NORMAL        |              60
+(2 rows)
+
+```
+
+   - [x] 5.4. Consultas con subconsultas
+
+--Grupos de musica y su género
+
+```sql
+
+select nombre ,
+ genero 
+ from artistas a 
+ join categorias_artistas ca on (a.id = ca.artistas_id)
+ join categorias c on (ca.categorias_id = c.id);
+ ```
+
+```
+     nombre     |   genero
+----------------+-------------
+ GUNS AND ROSES | ROCK
+ MADONA         | POP
+ DAVID GUETTA   | ELECTRONICA
+ EMINEM         | RAP
+ AC-DC          | ROCK
+ BRUNO MARS     | POP
+ CALVIN HARRIS  | ELECTRONICA
+ DRAKE          | RAP
+(8 rows)
+
+```
+-- Grupo y  scenario en el que tocaron
+
+```sql
+select nombre , escenario
+from artistas a 
+join concierto c on (a.concierto_id = c.id);
+```
+
+```
+     nombre     | escenario
+----------------+------------
+ GUNS AND ROSES | PRINCIPAL
+ MADONA         | PRINCIPAL
+ DAVID GUETTA   | PRINCIPAL
+ EMINEM         | PRINCIPAL
+ AC-DC          | SECUNDARIO
+ BRUNO MARS     | SECUNDARIO
+ CALVIN HARRIS  | SECUNDARIO
+ DRAKE          | SECUNDARIO
+(8 rows)
+
+```
+-- Como se retransmitio cada artista
+
+```sql
+select nombre , medio
+from artistas a 
+join concierto c on (a.concierto_id = c.id)
+join emite e on (c.id = e.concierto_id)
+join retransmision r on (e.retransmision_id = r.id);
+```
+
+```
+
+     nombre     |   medio
+----------------+-----------
+ GUNS AND ROSES | TV
+ MADONA         | RADIO
+ DAVID GUETTA   | TV
+ EMINEM         | RADIO
+ AC-DC          | STREAMING
+ BRUNO MARS     | STREAMING
+ CALVIN HARRIS  | STREAMING
+ DRAKE          | TV
+(8 rows)
+
+```
+-- Artista con más visualizaciones
+
+```sql
+select nombre, visualizaciones
+from artistas a 
+join concierto c on (a.concierto_id = c.id)
+join emite e on (c.id = e.concierto_id)
+join retransmision r on (e.retransmision_id = r.id)
+order by visualizaciones desc limit 1;
+```
+
+```
+ nombre | visualizaciones
+--------+-----------------
+ DRAKE  |             800
+(1 row)
+
+```
+
+-- Artista con menos visualizaciones
+
+```sql
+select nombre, visualizaciones
+from artistas a 
+join concierto c on (a.concierto_id = c.id)
+join emite e on (c.id = e.concierto_id)
+join retransmision r on (e.retransmision_id = r.id)
+order by visualizaciones asc limit 1;
+```
+
+```
+
+ nombre | visualizaciones
+--------+-----------------
+ MADONA |              50
+(1 row)
+```
+
+-- Fecha en la que toca cada artista
+
+```sql
+select nombre, fecha , escenario
+from artistas a 
+join concierto c on (a.concierto_id = c.id);
+```
+
+```
+     nombre     |   fecha    | escenario
+----------------+------------+------------
+ GUNS AND ROSES | 2021-06-24 | PRINCIPAL
+ MADONA         | 2021-06-25 | PRINCIPAL
+ DAVID GUETTA   | 2021-06-26 | PRINCIPAL
+ EMINEM         | 2021-06-27 | PRINCIPAL
+ AC-DC          | 2021-06-24 | SECUNDARIO
+ BRUNO MARS     | 2021-06-25 | SECUNDARIO
+ CALVIN HARRIS  | 2021-06-26 | SECUNDARIO
+ DRAKE          | 2021-06-27 | SECUNDARIO
+(8 rows)
+
+```
+-- Candidad de entrdas que se vendio por dia segun el artista
+
+```sql
+select a.nombre , 
+count(e.fecha) as "numero de entrada",
+c.fecha
+from artistas a 
+join concierto c on (a.concierto_id = c.id)
+join festival f on (c.festival_id = f.id)
+join entradas e on (f.id = e.festival_id)
+where c.fecha = e.fecha
+group by e.fecha, a.nombre,c.fecha;
+
+```
+```
+     nombre     | numero de entrada |   fecha
+----------------+-------------------+------------
+ AC-DC          |                20 | 2021-06-24
+ GUNS AND ROSES |                20 | 2021-06-24
+ BRUNO MARS     |                13 | 2021-06-25
+ MADONA         |                13 | 2021-06-25
+ CALVIN HARRIS  |                25 | 2021-06-26
+ DAVID GUETTA   |                25 | 2021-06-26
+ DRAKE          |                12 | 2021-06-27
+ EMINEM         |                12 | 2021-06-27
+(8 rows)
+
+
+```
+
+-- cliente que contrataron seguro y el precio de este
+
+```sql
+select concat(c.nombre,' ',c.apellidos) as "nombre",
+ct.entrada_id,
+s.precio,
+e.precio
+from cliente c 
+join compra cm on (c.id = cm.cliente_id)
+join entradas e on (cm.entrada_id = e.id)
+join contratar ct on (e.id = ct.entrada_id)
+join seguro s on (ct.seguro_id = s.id)
+where ct.entrada_id = e.id;
+```
+
+```
+             nombre             | entrada_id | precio | precio
+--------------------------------+------------+--------+--------
+ JOSE GIMENO MORA               | ET03       |  10.00 | 110.00
+ NATALIA JALDO SUAREZ           | ET06       |  10.00 | 110.00
+ RAFAEL RODRIGUEZ PARRA         | ET11       |  10.00 | 110.00
+ BELEN MATIAS FERNANDEZ         | ET15       |  10.00 | 110.00
+ MARTA JIMENEZ GIL              | ET18       |  10.00 | 110.00
+ JORGE SANCHEZ RAMON            | ET21       |  10.00 | 110.00
+ JUAN RUIZ HERNANDEZ            | ET24       |  10.00 | 110.00
+ ALVARO VILCHEZ CARMONA         | ET25       |  10.00 | 110.00
+ FRANCISCO ARCOS CARMONA        | ET27       |  10.00 | 110.00
+ EDUARDO CASAS PÁEZ             | ET29       |  10.00 | 110.00
+ ROSARIO INMACULADA HORTA OCHOA | ET47       |  10.00 | 110.00
+ VERONICA CASTELLANOS ROJAS     | ET55       |  10.00 | 110.00
+ MARIA VEGA ZAMBRANO            | ET59       |  10.00 | 110.00
+ RAQUEL GOMEZ GIANINE           | ET65       |  10.00 | 110.00
+ GABRIEL FORERO PEÑA            | ET68       |  10.00 | 110.00
+(15 rows)
+
+
+```
+-- Que aficonados estuvieron en el concierto de los GUNS AND ROSES
+
+```sql
+select concat(c.nombre,' ',c.apellidos) as "nombre",
+a.nombre as "grupo"
+from cliente c 
+join compra cm on (cm.cliente_id = c.id)
+join entradas e on (cm.entrada_id = e.id)
+join festival f on (e.festival_id = f.id)
+join concierto ct on (f.id = ct.festival_id)
+join artistas a on (ct.id = a.concierto_id)
+where ct.fecha= e.fecha and a.nombre = 'GUNS AND ROSES';
+```
+
+```
+            nombre            |     grupo
+------------------------------+----------------
+ ROSA MARIA ACIEN ZURUTA      | GUNS AND ROSES
+ IRENE RODRIGUEZ GARCIA       | GUNS AND ROSES
+ ISABEL NAVARRO MARTIN        | GUNS AND ROSES
+ LUIS GARCIA QUESADA          | GUNS AND ROSES
+ ALVARO VILCHEZ CARMONA       | GUNS AND ROSES
+ ANTONIO BUITRAGO CONTRERAS   | GUNS AND ROSES
+ ALEJANDRO URIBE ANTIA        | GUNS AND ROSES
+ MARIO DIAZ MEJIA             | GUNS AND ROSES
+ JULIO SANCHEZ PRADA          | GUNS AND ROSES
+ MARIA BELEN NOVOA GOMEZ      | GUNS AND ROSES
+ OLGA DEL RÍO AYERBE          | GUNS AND ROSES
+ MANUELA DUEÑAS ROJAS         | GUNS AND ROSES
+ LUCIA GARCIA RUEDA           | GUNS AND ROSES
+ MARGARITA BUITRAGO CONTRERAS | GUNS AND ROSES
+ JORGE CASAS PÁEZ             | GUNS AND ROSES
+ ARACELI ULLOA ORJUELA        | GUNS AND ROSES
+ LUIS ALVAREZ CASTILLO        | GUNS AND ROSES
+ CARMEN REY SANCHEZ           | GUNS AND ROSES
+ NADIA ACERO CARO             | GUNS AND ROSES
+ LUIS DIAZ BELTRAN            | GUNS AND ROSES
+(20 rows)
+
+```
+
+-- Tres primeras letras del apellido de los Clientes qque compraron la entrada por internet
+
+```sql
+select c.apellidos,
+upper (substring (c.apellidos,1,3)) as iniciales
+from cliente c 
+join compra cm on (c.id = cm.cliente_id)
+where cm.via = 'INTERNET';
+```
+
+```
+     apellidos      | iniciales
+--------------------+-----------
+ ALBUSAC TAMARGO    | ALB
+ JALDO SUAREZ       | JAL
+ RODRIGUEZ PARRA    | ROD
+ MATIAS FERNANDEZ   | MAT
+ GALERA GARCIA      | GAL
+ JIMENEZ GIL        | JIM
+ LOPEZ OJEDA        | LOP
+
+ VEGA ZAMBRANO      | VEG
+ IREGUI GALEANO     | IRE
+ ACERO CARO         | ACE
+ FERNÁNDEZ MARTÍNEZ | FER
+ SUARIQUE ÁVILA     | SUA
+ FORERO PEÑA        | FOR
+ NIETO BUSTOS       | NIE
+(35 rows)
+
+```
+
+-- Mostar los apellidos en orden inverso de clientes que compraro entrada en taquilla
+
+```sql
+select apellidos,
+split_part(c.apellidos,' ',2)||' '||split_part(c.apellidos,' ',1) as " apellidos invertidos"
+from cliente c 
+join compra cm on (c.id = cm.cliente_id)
+where cm.via = 'TAQUILLA';
+```
+
+```
+     apellidos      |  apellidos invertidos
+--------------------+-----------------------
+ ACIEN ZURUTA       | ZURUTA ACIEN
+ GIMENO MORA        | MORA GIMENO
+ IGLESIAS PASTOR    | PASTOR IGLESIAS
+ RODRIGUEZ GARCIA   | GARCIA RODRIGUEZ
+ MUÑOZ BENAVIDES    | BENAVIDES MUÑOZ
+ LOPEZ CASADO       | CASADO LOPEZ
+ NAVARRO MARTIN     | MARTIN NAVARRO
+ RODRIGUEZ MARTINEZ | MARTINEZ RODRIGUEZ
+ HUERTAS PEREZ      | PEREZ HUERTAS
+ LOPEZ ROBLES       | ROBLES LOPEZ
+ CORTES AMATE       | AMATE CORTES
+
+
+```
+
+
+
+
+
+
+
+
+- [x] 6. Vistas, secuencias e índices
+- [x] 7. Scripts en PL/pgSQL
 - [ ] 8. Extras
    - [ ] 8.1. Cursores
    - [ ] 8.2. Prototipo de interfaz de usuario
