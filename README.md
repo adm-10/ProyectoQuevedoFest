@@ -1402,14 +1402,181 @@ where cm.via = 'TAQUILLA';
 ```
 
 
-
-
-
-
-
-
 - [x] 6. Vistas, secuencias e índices
+
+-- Precio entrada  más caras 
+
+```sql
+
+create view masCara as
+select tipo, precio
+from entradas 
+group by tipo, precio
+order by precio desc limit 1;
+
+select * from masCara;
+```
+
+```
+ tipo | precio
+------+--------
+ VIP  | 200.00
+(1 row)
+
+
+```
+
+-- Clientes de Madrid
+
+```sql
+create view clientesMadrid as 
+select nombre,apellidos ,ciudad
+from cliente 
+where ciudad= 'MADRID';
+
+select * from  clientesMadrid;
+```
+
+```
+       nombre       |     apellidos      | ciudad
+--------------------+--------------------+--------
+ ROSA MARIA         | ACIEN ZURUTA       | MADRID
+ DANIEL             | ALBUSAC TAMARGO    | MADRID
+ SUSANA             | IGLESIAS PASTOR    | MADRID
+ NATALIA            | JALDO SUAREZ       | MADRID
+ MATIAS             | RODRIGUEZ MARTINEZ | MADRID
+ SANDRA             | HUERTAS PEREZ      | MADRID
+ BELEN              | MATIAS FERNANDEZ   | MADRID
+
+ CARMEN             | REY SANCHEZ        | MADRID
+ NADIA              | ACERO CARO         | MADRID
+ NICOLAS            | NIETO BUSTOS       | MADRID
+(26 rows)
+```
+
+-- Ciudades diferentes
+
+
+```sql
+create view ciudadesClientes as 
+select distinct ciudad 
+from cliente;
+
+
+select * from ciudadesClientes;
+
+```
+
+```
+  ciudad
+-----------
+ BARCELONA
+ MADRID
+ OVIEDO
+ SANTANDER
+ SEVILLA
+ VALENCIA
+(6 rows)
+```
+-- Grupos y generos
+
+```sql
+create view grupoGenero as
+select nombre , genero 
+ from artistas a 
+ join categorias_artistas ca on (a.id = ca.artistas_id)
+ join categorias c on (ca.categorias_id = c.id);
+
+
+select * from grupoGenero;
+```
+
+```
+     nombre     |   genero
+----------------+-------------
+ GUNS AND ROSES | ROCK
+ MADONA         | POP
+ DAVID GUETTA   | ELECTRONICA
+ EMINEM         | RAP
+ AC-DC          | ROCK
+ BRUNO MARS     | POP
+ CALVIN HARRIS  | ELECTRONICA
+ DRAKE          | RAP
+(8 rows)
+
+```
+
+
 - [x] 7. Scripts en PL/pgSQL
+
+
+```sql
+do
+$$
+<<primer1>>
+declare
+ v_precio numeric(6)=0;
+begin
+ select count(*)
+ into v_precio
+ from entradas;
+ raise notice 'El número de entradas vendidas es: %', v_precio;
+end primer1;
+$$
+
+```
+
+```
+El número de entradas VIP es: 70
+```
+
+
+
+```sql
+
+do
+$$
+<<primer1>>
+declare
+ v_personas numeric(6)=0;
+begin
+ select count(*)
+ into v_personas
+ from entradas
+ where fecha= '2021-06-26';
+ raise notice 'El 26/05/2021 acudieron: % personas', v_personas;
+end primer1;
+$$
+```
+
+```
+El 26/05/2021 acudieron: 25 personas
+```
+
+```sql
+do
+$$
+<<primer1>>
+declare
+ v_precio numeric(6)=0;
+begin
+ select count(*)
+ into v_precio
+ from entradas
+ where descuento ='SI';
+ raise notice 'num entradas con descuento: %', v_precio;
+end primer1;
+$$
+```
+
+
+```
+num entradas con descuento: 10
+```
+
+
+
+
 - [ ] 8. Extras
    - [ ] 8.1. Cursores
    - [ ] 8.2. Prototipo de interfaz de usuario
